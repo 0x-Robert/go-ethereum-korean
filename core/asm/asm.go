@@ -24,6 +24,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/vm"
 )
 
+// 디스어셈블된 EVM 명령어를 위한 이터레이터
 // Iterator for disassembled EVM instructions
 type instructionIterator struct {
 	code    []byte
@@ -35,6 +36,7 @@ type instructionIterator struct {
 }
 
 // Create a new instruction iterator.
+// 새 명령어 반복자를 생성합니다.
 func NewInstructionIterator(code []byte) *instructionIterator {
 	it := new(instructionIterator)
 	it.code = code
@@ -42,20 +44,24 @@ func NewInstructionIterator(code []byte) *instructionIterator {
 }
 
 // Returns true if there is a next instruction and moves on.
+// 다음 명령어가 있으면 참을 반환하고 계속 진행합니다.
 func (it *instructionIterator) Next() bool {
 	if it.error != nil || uint64(len(it.code)) <= it.pc {
+		// 이전에 오류 또는 끝에 도달했습니다.
 		// We previously reached an error or the end.
 		return false
 	}
 
 	if it.started {
 		// Since the iteration has been already started we move to the next instruction.
+		// 반복이 이미 시작되었으므로 다음 명령어로 이동합니다.
 		if it.arg != nil {
 			it.pc += uint64(len(it.arg))
 		}
 		it.pc++
 	} else {
 		// We start the iteration from the first instruction.
+		// 첫 번째 명령어부터 반복을 시작합니다.
 		it.started = true
 	}
 
@@ -79,27 +85,32 @@ func (it *instructionIterator) Next() bool {
 	return true
 }
 
+// 발생했을 수 있는 모든 오류를 반환합니다.
 // Returns any error that may have been encountered.
 func (it *instructionIterator) Error() error {
 	return it.error
 }
 
 // Returns the PC of the current instruction.
+// 현재 명령의 PC를 반환합니다.
 func (it *instructionIterator) PC() uint64 {
 	return it.pc
 }
 
 // Returns the opcode of the current instruction.
+// 현재 명령어의 연산 코드를 반환합니다.
 func (it *instructionIterator) Op() vm.OpCode {
 	return it.op
 }
 
 // Returns the argument of the current instruction.
+// 현재 명령어의 인수를 반환합니다.
 func (it *instructionIterator) Arg() []byte {
 	return it.arg
 }
 
 // Pretty-print all disassembled EVM instructions to stdout.
+// 분해된 모든 EVM 인스트럭션을 stdout에 예쁘게 인쇄합니다.
 func PrintDisassembled(code string) error {
 	script, err := hex.DecodeString(code)
 	if err != nil {
@@ -118,6 +129,7 @@ func PrintDisassembled(code string) error {
 }
 
 // Return all disassembled EVM instructions in human-readable format.
+// 분해된 모든 EVM 명령어를 사람이 읽을 수 있는 형식으로 반환합니다.
 func Disassemble(script []byte) ([]string, error) {
 	instrs := make([]string, 0)
 

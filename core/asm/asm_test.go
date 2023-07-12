@@ -17,14 +17,17 @@
 package asm
 
 import (
-	"testing"
-
 	"encoding/hex"
+	"testing"
 )
 
 // Tests disassembling the instructions for valid evm code
 func TestInstructionIteratorValid(t *testing.T) {
 	cnt := 0
+	// DecodeString은 16진수 문자열 s로 표시되는 바이트를 반환합니다.
+	// DecodeString은 src에 16진수 문자만 포함되고 길이가 짝수일 것으로 예상합니다.
+	// 입력이 잘못된 경우, DecodeString은 오류 이전에 디코딩된 바이트를 반환합니다.
+
 	script, _ := hex.DecodeString("61000000")
 
 	it := NewInstructionIterator(script)

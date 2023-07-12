@@ -87,7 +87,7 @@ type Table struct {
 	// 부트스트렙 노드
 	// 랜덤 소스. 주기적으로 재 시딩됨
 
-	db         *nodeDB // database of known nodes
+	db *nodeDB // database of known nodes
 	// 알려진 노드의 db
 	refreshReq chan chan struct{}
 	initDone   chan struct{}
@@ -132,7 +132,7 @@ type bucket struct {
 	replacements []*Node // recently seen nodes to be used if revalidation fails
 	// 생존 목록(마지막 활동순으로 정렬된)
 	// 검증이 실패할 경우 사용할 최근 노드
-	ips          netutil.DistinctNetSet
+	ips netutil.DistinctNetSet
 }
 
 func newTable(t transport, ourID NodeID, ourAddr *net.UDPAddr, nodeDBPath string, bootnodes []*Node) (*Table, error) {
@@ -259,7 +259,7 @@ func (tab *Table) Close() {
 // are used to connect to the network if the table is empty and there
 // are no known nodes in the database.
 // setFallbackNodes함수는 연결의 초기 포인트를 설정한다
-// 이 노드들은 테이블이 비어있고 알려진 노드가 dB에 없을때 
+// 이 노드들은 테이블이 비어있고 알려진 노드가 dB에 없을때
 // 네트워크에 연결하기 위해 사용된다
 func (tab *Table) setFallbackNodes(nodes []*Node) error {
 	for _, n := range nodes {
@@ -323,7 +323,7 @@ func (tab *Table) Resolve(targetID NodeID) *Node {
 // The given target does not need to be an actual node
 // identifier.
 // Lookup함수는 주어진 타겟에 가까운 노드를 네트워크 검색한다
-// 각 반복에서 가장 가까운 노드에 ㅈㅓㅂ근한다
+// 각 반복에서 가장 가까운 노드에 접근한다
 // 주어진 타겟노드는 실제 노드 ID가 필요하지 않다
 func (tab *Table) Lookup(targetID NodeID) []*Node {
 	return tab.lookup(targetID, true)
@@ -340,7 +340,7 @@ func (tab *Table) lookup(targetID NodeID, refreshIfEmpty bool) []*Node {
 	)
 	// don't query further if we hit ourself.
 	// unlikely to happen often in practice.
-	// 스스로일경우 더이상 쿼리하지 말것
+	// 스스로일 경우 더 이상 쿼리하지 말것
 	// 잘 일어나지 않지만 연습에서 자주 발생
 	asked[tab.self.ID] = true
 
@@ -614,7 +614,7 @@ func (tab *Table) copyBondedNodes() {
 	}
 }
 
-//closest함수는 주어진 노드로부터 가장 가까운 n 노드를 테이블에서 반환한다
+// closest함수는 주어진 노드로부터 가장 가까운 n 노드를 테이블에서 반환한다
 // closest returns the n nodes in the table that are closest to the
 // given id. The caller must hold tab.mutex.
 func (tab *Table) closest(target common.Hash, nresults int) *nodesByDistance {
@@ -641,7 +641,7 @@ func (tab *Table) len() (n int) {
 
 // bondall bonds with all given nodes concurrently and returns
 // those nodes for which bonding has probably succeeded.
-// bondall 함수는 주어진 노드를동시에 연결하며 
+// bondall 함수는 주어진 노드를 동시에 연결하며
 // 성공적으로 붙은 노드를 반환한다
 func (tab *Table) bondall(nodes []*Node) (result []*Node) {
 	rc := make(chan *Node, len(nodes))
@@ -811,7 +811,7 @@ func (tab *Table) add(new *Node) {
 
 // stuff adds nodes the table to the end of their corresponding bucket
 // if the bucket is not full. The caller must not hold tab.mutex.
-//stuff함수는 만약 버켓이 가득차지 않았을 경우 노드를 관련 버켓의 테이블의 끝에 추가한다
+// stuff함수는 만약 버켓이 가득차지 않았을 경우 노드를 관련 버켓의 테이블의 끝에 추가한다
 func (tab *Table) stuff(nodes []*Node) {
 	tab.mutex.Lock()
 	defer tab.mutex.Unlock()
@@ -973,7 +973,6 @@ type nodesByDistance struct {
 	entries []*Node
 	target  common.Hash
 }
-
 
 // push adds the given node to the list, keeping the total size below maxElems.
 // push함수는 주어진 노드를 리스트에 추가하고 최대 갯수아래의 전체 사이즈를 저장한다

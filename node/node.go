@@ -39,34 +39,34 @@ import (
 // Node is a container on which services can be registered.
 // Node는 서비스가 등록될수 있는 컨테이너이다
 type Node struct {
-	eventmux *event.TypeMux // Event multiplexer used between the services of a stack
-	config   *Config
-	accman   *accounts.Manager
+	eventmux *event.TypeMux    // Event multiplexer used between the services of a stack, 스택 서비스 사이에서 이벤트 멀티플렉스 변수
+	config   *Config           // 컨피그 설정
+	accman   *accounts.Manager // 어카운트 매니저
 
 	ephemeralKeystore string         // if non-empty, the key directory that will be removed by Stop
 	instanceDirLock   flock.Releaser // prevents concurrent use of instance directory
 
-	serverConfig p2p.Config
-	server       *p2p.Server // Currently running P2P networking layer
+	serverConfig p2p.Config  // p2p 컨피그
+	server       *p2p.Server // Currently running P2P networking layer 현재 동작중인 p2p 네트워킹 레이어
 
 	serviceFuncs []ServiceConstructor     // Service constructors (in dependency order)
 	services     map[reflect.Type]Service // Currently running services
 
-	rpcAPIs       []rpc.API   // List of APIs currently provided by the node
+	rpcAPIs       []rpc.API   // List of APIs currently provided by the node, 노드에 의해 현재 제공되고 있는 API 리스트들
 	inprocHandler *rpc.Server // In-process RPC request handler to process the API requests
 
 	ipcEndpoint string       // IPC endpoint to listen at (empty = IPC disabled)
 	ipcListener net.Listener // IPC RPC listener socket to serve API requests
 	ipcHandler  *rpc.Server  // IPC RPC request handler to process the API requests
 
-	httpEndpoint  string       // HTTP endpoint (interface + port) to listen at (empty = HTTP disabled)
-	httpWhitelist []string     // HTTP RPC modules to allow through this endpoint
-	httpListener  net.Listener // HTTP RPC listener socket to server API requests
-	httpHandler   *rpc.Server  // HTTP RPC request handler to process the API requests
+	httpEndpoint  string       // HTTP endpoint (interface + port) to listen at (empty = HTTP disabled), HTTP 엔드포인트
+	httpWhitelist []string     // HTTP RPC modules to allow through this endpoint, 화이트리스트
+	httpListener  net.Listener // HTTP RPC listener socket to server API requests, 리스너
+	httpHandler   *rpc.Server  // HTTP RPC request handler to process the API requests, 핸들러
 
-	wsEndpoint string       // Websocket endpoint (interface + port) to listen at (empty = websocket disabled)
-	wsListener net.Listener // Websocket RPC listener socket to server API requests
-	wsHandler  *rpc.Server  // Websocket RPC request handler to process the API requests
+	wsEndpoint string       // Websocket endpoint (interface + port) to listen at (empty = websocket disabled), 웹소켓 엔드포인트
+	wsListener net.Listener // Websocket RPC listener socket to server API requests, 웹소켓 리스너
+	wsHandler  *rpc.Server  // Websocket RPC request handler to process the API requests, 웹소켓 핸들러
 
 	stop chan struct{} // Channel to wait for termination notifications
 	lock sync.RWMutex
@@ -128,7 +128,7 @@ func New(conf *Config) (*Node, error) {
 
 // Register injects a new service into the node's stack. The service created by
 // the passed constructor must be unique in its type with regard to sibling ones.
-// 이 함수는 노드의 스택에 새 서비스를 등록한다. 
+// 이 함수는 노드의 스택에 새 서비스를 등록한다.
 // 전달된 서비스 생성자로부터 생성된 서비스는 유니크 해야한다
 
 func (n *Node) Register(constructor ServiceConstructor) error {
